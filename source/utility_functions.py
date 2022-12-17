@@ -4,6 +4,11 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 
+import plotly.express as px 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+
 import sympy 
 from scipy.optimize import curve_fit
 
@@ -68,36 +73,41 @@ def plot_func(params, x_values, y_values, lower, upper):
 
     # second derivative
     second_derive_predicted_values = derivative_func(params, lower, upper, 2)
+    second_max_x_index = np.argmax(second_derive_predicted_values)
+    second_min_x_index = np.argmin(second_derive_predicted_values)
+    second_max_day = x[second_max_x_index]
+    second_min_day = x[second_min_x_index]
     
     fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 7))
     # plot orginal data
     axes[0].scatter(x_values, y_values, color="red", label="original data")
     # plot growth curve 
     axes[0].plot(x, predicted_values, label="growth curve")
-    axes[0].plot([x[max_x_index], x[max_x_index]], [0,  predicted_values[max_x_index]], linestyle="--", label="max growth rate day")
+    axes[0].plot([max_day, max_day], [0, predicted_values[max_x_index]], linestyle="--", label="max growth rate day", color="orange")
+    axes[0].plot([lower, upper], [0, 0], color="green")
     axes[0].legend()
+    axes[0].set_title("growth curve", fontsize=20, fontweight="bold")
 
     # plot first derivative
     axes[1].plot(x, first_deriv_predicted_values, label="first deriv")
+    axes[1].plot([max_day, max_day], [0, first_deriv_predicted_values[max_x_index]],  linestyle="--", color="orange")
+    axes[1].plot([lower, upper], [0, 0], color="green")
+    axes[1].set_title("first derivative", fontsize=20, fontweight="bold")
 
     # plot second derivative
     axes[2].plot(x, second_derive_predicted_values, label="first deriv")
-    
-    
-    # ax.plot([max_index, max_index], [0, predicted_values[max_index]], linestyle="--", color="orange", label="growth curve")
+    axes[2].plot([second_min_day, second_min_day],[0, second_derive_predicted_values[second_min_x_index]], linestyle="--", color="orange")
+    axes[2].plot([second_max_day, second_max_day],[0, second_derive_predicted_values[second_max_x_index]], linestyle="--", color="orange")
+    axes[2].plot([lower, upper], [0, 0], color="green")
+    axes[2].set_title("second derivative", fontsize=20, fontweight="bold")
 
-    # plot the predicted curve
-
-    # plt.show()
-    return fig, max_day, max_growth_rate
+    return fig, max_day, max_growth_rate, second_max_day, second_min_day
 
 def save_predicted_values():
     pass
 
 def save_params():
     pass
-
-
 
 
 if __name__ == "__main__":
@@ -119,7 +129,7 @@ if __name__ == "__main__":
     test = derivative_func(params, 10, 30, 2)
 
     plot_func(params, x_values, y_values, 1, 140)
-
+    plt.show()
 
 
 

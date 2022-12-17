@@ -15,6 +15,7 @@ from utility_functions import plot_func
 
 def main():
     """Strea Frame"""
+    st.set_page_config(layout="wide")
     
     # sidebar
     with st.sidebar:
@@ -47,20 +48,22 @@ def main():
         # solve parameters
         params = params_search(five_params_func, x_values, y_values)
         
-        # generate predicted values
-        # predicted_values = predict_func(five_params_func, params, range_values[0], range_values[-1])
-        fig, max_day, max_growth_rate = plot_func(params, x_values, y_values, range_values[0], range_values[1])
+        fig, max_day, max_growth_rate, sec_max_day, sec_min_day = plot_func(params, x_values, y_values, range_values[0], range_values[1])
 
-        col2_1, col2_2, col2_3 = st.columns(3)
-        with col2_1:
+        # show results
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
             st.metric("selected curve:", df.columns[selected_curve])
-        with col2_2:
-            st.metric("max growth rate day", max_day)
-        with col2_3:
+        with col2:
+            st.metric("max growth rate day", int(max_day))
+        with col3:
             st.metric("max growth rate", max_growth_rate)
+        with col4:
+            st.metric("second derivative max day", int(sec_max_day))
+            st.metric("second derivative min day", int(sec_min_day))
         
+        # plot 
         st.pyplot(fig)
-        # st.pyplot(fig, clear_figure=True, height=100, width=100)
 
         # save predicted values 
 
