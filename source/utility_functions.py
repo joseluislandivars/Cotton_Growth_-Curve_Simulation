@@ -4,11 +4,6 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt
 
-import plotly.express as px 
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-
 import sympy 
 from scipy.optimize import curve_fit
 
@@ -103,14 +98,8 @@ def plot_func(params, x_values, y_values, lower, upper):
 
     return fig, max_day, max_growth_rate, second_max_day, second_min_day
 
-def save_predicted_values():
-    pass
-
-def save_params():
-    pass
-
-
 if __name__ == "__main__":
+    # test data 
     dataset_path = "../dataset/growth_curve_dataset.xlsx"
     dataset = pd.read_excel(dataset_path)
     
@@ -118,18 +107,20 @@ if __name__ == "__main__":
 
     x_values = dataset['x'][x_value_index].values
     y_values = dataset.iloc[:, 1][x_value_index].values
-    
+
+
     assert len(x_values) == len(y_values), "not equal length"
 
-    # params, _ = curve_fit(five_params_func, x_values, y_values, method="trf", maxfev=100000)
     params = params_search(five_params_func,  x_values, y_values, "trf", 1000000)
 
     predicted_values = predict_func(five_params_func, params, 10, 30)
-
-    test = derivative_func(params, 10, 30, 2)
+    print(predicted_values.shape)
 
     plot_func(params, x_values, y_values, 1, 140)
     plt.show()
+    
+
+    
 
 
 

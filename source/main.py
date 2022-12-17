@@ -3,15 +3,34 @@
 """
 Streamlit main function
 """
-from matplotlib import container
+import numpy as np
 import pandas as pd
 import streamlit as st
 
 from utility_functions import five_params_func
 from utility_functions import params_search
 from utility_functions import predict_func
-from utility_functions import derivative_func
 from utility_functions import plot_func
+
+@st.cache
+def save_predicted_values(dataset, lower, upper):
+    x_value_index = dataset['x'].notna()
+    x_values = dataset['x'][x_value_index].values
+    y_values = dataset.iloc[:, 1:][x_value_index].values.T
+
+    data = []
+    for col in y_values:
+        params = params_search(five_params_func, x_values, col)
+        predicted_values = predict_func(five_params_func, params, lower, upper)
+        data.append(predicted_values)
+
+    data = np.array(data).T
+    range_value = upper - lower + 1
+    x = np.linspace(lower, upper, range_value).reshape((-1, 1))
+    data = np.concatenate([x, data], axis=1)
+    df = pd.DataFrame(data=data, columns=dataset.columns)
+    return df.to_csv(index=False).encode("utf-8")
+ 
 
 def main():
     """Strea Frame"""
@@ -65,23 +84,19 @@ def main():
         # plot 
         st.pyplot(fig)
 
-        # save predicted values 
-
-
-        # save params
-        
+        # save values
         with st.sidebar:
-            st.button("hello world")
-
-
+            csv = save_predicted_values(df, range_values[0], range_values[1])
+            st.download_button(
+                    label="Download data as CSV",
+                    data=csv,
+                    file_name="predictd_values.csv",
+                    mime="text/csv",
+                    )
     else:
         st.title("magic!")
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
