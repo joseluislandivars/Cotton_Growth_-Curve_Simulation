@@ -12,7 +12,7 @@ from utility_functions import params_search
 from utility_functions import predict_func
 from utility_functions import plot_func
 
-@st.cache
+@st.experimental_memo
 def save_predicted_values(dataset, lower, upper):
     x_value_index = dataset['x'].notna()
     x_values = dataset['x'][x_value_index].values
