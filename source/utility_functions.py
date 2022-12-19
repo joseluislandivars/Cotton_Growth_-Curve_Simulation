@@ -59,6 +59,8 @@ def plot_func(params, x_values, y_values, lower, upper):
     x = np.linspace(lower, upper, range_value)
     predicted_values = predict_func(five_params_func, params, lower, upper)
 
+    predicted_values[predicted_values < 0] = 0
+
     # first derivative 
     first_deriv_predicted_values = derivative_func(params, lower, upper)
     max_x_index = np.argmax(first_deriv_predicted_values)

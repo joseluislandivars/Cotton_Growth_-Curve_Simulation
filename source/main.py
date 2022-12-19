@@ -12,6 +12,10 @@ from utility_functions import params_search
 from utility_functions import predict_func
 from utility_functions import plot_func
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
 @st.experimental_memo
 def save_predicted_values(dataset, lower, upper):
     x_value_index = dataset['x'].notna()
@@ -25,6 +29,7 @@ def save_predicted_values(dataset, lower, upper):
         data.append(predicted_values)
 
     data = np.array(data).T
+    data[data < 0] = 0
     range_value = upper - lower + 1
     x = np.linspace(lower, upper, range_value).reshape((-1, 1))
     data = np.concatenate([x, data], axis=1)
