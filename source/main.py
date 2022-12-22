@@ -35,12 +35,12 @@ def save_predicted_values(dataset, lower, upper):
     data = np.concatenate([x, data], axis=1)
     df = pd.DataFrame(data=data, columns=dataset.columns)
     return df.to_csv(index=False).encode("utf-8")
- 
+
 
 def main():
     """Strea Frame"""
     st.set_page_config(layout="wide")
-    
+
     # sidebar
     with st.sidebar:
         # title and formula
@@ -50,11 +50,11 @@ def main():
         # upload data
         uploaded_file = st.file_uploader("choose a file")
 
-        # range of the day 
+        # range of the day
         range_values = st.slider(
-                "select a range: ", 1, 140, (0, 140)
+                "Select a range: ", 1, 140, (0, 140)
                 )
-       
+
     # load data
     if uploaded_file:
         if uploaded_file.name.split(".")[-1] == "xlsx":
@@ -63,7 +63,7 @@ def main():
             df = pd.read_csv(uploaded_file)
 
         num_columns = len(df.columns) - 1
-        selected_curve = st.slider("curve: ", 1, num_columns, 1)
+        selected_curve = st.slider("Curve: ", 1, num_columns, 1)
 
         x_value_index = df["x"].notna()
         x_values = df["x"][x_value_index].values
@@ -71,22 +71,22 @@ def main():
 
         # solve parameters
         params = params_search(five_params_func, x_values, y_values)
-        
+
         fig, max_day, max_growth_rate, sec_max_day, sec_min_day = plot_func(params, x_values, y_values, range_values[0], range_values[1])
 
         # show results
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("selected curve:", df.columns[selected_curve])
+            st.metric("Selected curve:", df.columns[selected_curve])
         with col2:
-            st.metric("max growth rate day", int(max_day))
+            st.metric("Max growth rate day:", int(max_day))
         with col3:
-            st.metric("max growth rate", max_growth_rate)
+            st.metric("Max growth rate:", max_growth_rate)
         with col4:
-            st.metric("second derivative max day", int(sec_max_day))
-            st.metric("second derivative min day", int(sec_min_day))
-        
-        # plot 
+            st.metric("Second derivative max day:", int(sec_max_day))
+            st.metric("Second derivative min day:", int(sec_min_day))
+
+        # plot
         st.pyplot(fig)
 
         # save values
@@ -95,13 +95,12 @@ def main():
             st.download_button(
                     label="Download data as CSV",
                     data=csv,
-                    file_name="predictd_values.csv",
+                    file_name="predicted_values.csv",
                     mime="text/csv",
                     )
     else:
-        st.title("magic!")
+        st.title("Magic!")
 
 
 if __name__ == "__main__":
     main()
-
